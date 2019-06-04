@@ -14,10 +14,10 @@ class MessageController extends Controller
      */
     public function crypt(Request $request): View
     {
-        $validated = $request->validate([
-            'message' => 'required',
-            'encrypt_method' => 'required',
-        ]);
+//        $validated = $request->validate([
+//            'message' => 'required',
+//            'encrypt_method' => 'required',
+//        ]);
 
         $start = microtime(true);
         $encrypt = hash($request->get('encrypt_method'), $request->get('message'));

@@ -32,7 +32,8 @@ Vue.component('example-component', require('./components/ExampleComponent.vue').
  * the page. Then, you may begin adding components to this application
  * or customize the JavaScript scaffolding to fit your unique needs.
  */
-jQuery("#crypt").click(function () {
+jQuery("#crypt").click(function (event) {
+    event.preventDefault();
     let message = jQuery('#message').val(),
         type = jQuery('input[name=encrypt_method]:checked').val();
 
@@ -43,7 +44,7 @@ jQuery("#crypt").click(function () {
             message: message,
             encrypt_method: type
         },
-        success: function (data) { $('#message-block').html(data); },
+        success: function (data) { $('#message-block').prepend(data); },
         dataType: 'html'
     });
 });

@@ -21,7 +21,7 @@
                     <form action="#" method="POST">
                         @csrf
                         <div class="form-group">
-                            <textarea class="form-control" name="message" id="message" cols="30" rows="5"></textarea>
+                            <textarea class="form-control" name="message" id="message" cols="30" rows="5" required></textarea>
                         </div>
                         <div class="form-group">
                             <label class="radio-inline">
@@ -37,7 +37,7 @@
                                 <input type="radio" name="encrypt_method" value="gost"> gost
                             </label>
                         </div>
-                        <button type="button" class="btn btn-success float-right" id="crypt">Зашифровать</button>
+                        <button type="submit" class="btn btn-success float-right" id="crypt">Зашифровать</button>
                     </form>
                 </div>
             </div>
