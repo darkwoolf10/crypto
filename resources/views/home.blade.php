@@ -25,17 +25,14 @@
                         </div>
                         <div class="form-group">
                             <label class="radio-inline">
-                                <input type="radio" name="encrypt_method" value="md5" checked> md5
+                                <input type="radio" name="encrypt_method" value="BF-OFB" checked> BF-OFB
                             </label>
                             <label class="radio-inline">
-                                <input type="radio" name="encrypt_method" value="sha3-512"> sha3-512
+                                <input type="radio" name="encrypt_method" value="AES-256-CBC"> AES-256-CBC
                             </label>
-                            <label class="radio-inline">
-                                <input type="radio" name="encrypt_method" value="sha256"> sha256
-                            </label>
-                            <label class="radio-inline">
-                                <input type="radio" name="encrypt_method" value="gost"> gost
-                            </label>
+                            {{--<label class="radio-inline">--}}
+                                {{--<input type="radio" name="encrypt_method" value="md5"> md5--}}
+                            {{--</label>--}}
                         </div>
                         <button type="submit" class="btn btn-success float-right" id="crypt">Зашифровать</button>
                     </form>

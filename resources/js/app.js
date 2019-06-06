@@ -37,6 +37,10 @@ jQuery("#crypt").click(function (event) {
     let message = jQuery('#message').val(),
         type = jQuery('input[name=encrypt_method]:checked').val();
 
+    if (message === '') {
+        return false;
+    }
+
     jQuery.ajax({
         method: "POST",
         url: "/crypt",
@@ -46,6 +50,24 @@ jQuery("#crypt").click(function (event) {
         },
         success: function (data) { $('#message-block').prepend(data); },
         dataType: 'html'
+    });
+});
+
+jQuery("#decrypt").click(function (event) {
+    event.preventDefault();
+    let id = jQuery('#messageId').val();
+
+    if (id === '') {
+        return false;
+    }
+
+    jQuery.ajax({
+        method: "POST",
+        url: "/decrypt",
+        data: {
+            id: id
+        },
+        success: function (data) { console.log(data); }
     });
 });
 // const app = new Vue({

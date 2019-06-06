@@ -228,4 +228,9 @@ return [
 
     ],
 
+    'crypt' => [
+        'key' => 'This is my secret key',
+        'iv' => 'This is my secret iv',
+    ],
+
 ];

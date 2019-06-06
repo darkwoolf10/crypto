@@ -7,6 +7,10 @@ use Illuminate\Database\Eloquent\Model;
 /**
  * @property string encode
  * @property mixed message
+ * @property float time
+ * @property mixed type
+ * @property string key
+ * @property bool|string iv
  */
 class Message extends Model
 {
