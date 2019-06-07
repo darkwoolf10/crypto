@@ -6,33 +6,31 @@ namespace App\Sevices;
  * Class CryptoService
  * @package App\Sevices
  */
-class CryptoService implements CryptoInterface
+class CryptoService
 {
-
-    private $method;
-
-    public function __construct(?string $method)
+    function encrypt_decrypt(string $action, string $string, string $encrypt_method): string
     {
-        $this->method = $method;
-    }
+        $output = false;
 
-    /**
-     * @param string $data
-     * @param string $secret_key
-     * @param string $secret_iv
-     * @return string
-     */
-    public function encrypt(string $data, string $secret_key, string $secret_iv): string
-    {
-        $output = openssl_encrypt($data, $this->method, $secret_key, 0, $secret_iv);
+        switch ($encrypt_method) {
+            case 'BF-OFB': $length = 8; break;
+            case 'AES-256-CBC': $length = 16; break;
+            default: $length = 0;
+        }
 
-        return base64_encode($output);
-    }
 
-    public function decrypt(string $data,string $secret_key, string $secret_iv): string
-    {
-        $output =  openssl_decrypt($data, $this->method, $secret_key, 0, $secret_iv);
+        $key = hash('sha256', config('app.crypt.key'));
 
-        return base64_encode($output);
+        // iv - encrypt method AES-256-CBC expects 16 bytes - else you will get a warning
+        $iv = substr(hash('sha256', config('app.crypt.iv')), 0, $length);
+
+        if ( $action == 'encrypt' ) {
+            $output = openssl_encrypt($string, $encrypt_method, $key, 0, $iv);
+            $output = base64_encode($output);
+        } else if( $action == 'decrypt' ) {
+            $output = openssl_decrypt(base64_decode($string), $encrypt_method, $key, 0, $iv);
+        }
+
+        return $output;
     }
 }

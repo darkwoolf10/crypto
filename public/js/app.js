@@ -49220,6 +49220,11 @@ jQuery("#crypt").click(function (event) {
   event.preventDefault();
   var message = jQuery('#message').val(),
       type = jQuery('input[name=encrypt_method]:checked').val();
+
+  if (message === '') {
+    return false;
+  }
+
   jQuery.ajax({
     method: "POST",
     url: "/crypt",
@@ -49231,6 +49236,26 @@ jQuery("#crypt").click(function (event) {
       $('#message-block').prepend(data);
     },
     dataType: 'html'
+  });
+});
+jQuery(".decrypt").click(function (event) {
+  event.preventDefault();
+  var form = $(this).parent().parent();
+  var messageId = form.children('.messageId').val();
+
+  if (messageId === '') {
+    return false;
+  }
+
+  jQuery.ajax({
+    method: "POST",
+    url: "/decrypt",
+    data: {
+      id: messageId
+    },
+    success: function success(data) {
+      console.log(data);
+    }
   });
 }); // const app = new Vue({
 //     el: '#app',

@@ -53,11 +53,12 @@ jQuery("#crypt").click(function (event) {
     });
 });
 
-jQuery("#decrypt").click(function (event) {
+jQuery(".decrypt").click(function (event) {
     event.preventDefault();
-    let id = jQuery('#messageId').val();
+    let form = $(this).parent().parent();
+    let messageId = form.children('.messageId').val();
 
-    if (id === '') {
+    if (messageId === '') {
         return false;
     }
 
@@ -65,7 +66,7 @@ jQuery("#decrypt").click(function (event) {
         method: "POST",
         url: "/decrypt",
         data: {
-            id: id
+            id: messageId
         },
         success: function (data) { console.log(data); }
     });

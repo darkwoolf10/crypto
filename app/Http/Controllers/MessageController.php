@@ -20,26 +20,21 @@ class MessageController extends Controller
 //            'message' => 'required',
 //        ]);
 
-        $cryptoService = new CryptoService($request->get('encrypt_method'));
-
-        switch ($request->get('encrypt_method')) {
-            case 'BF-OFB': $length = 8; break;
-            case 'AES-256-CBC': $length = 16; break;
-            default: $length = 0;
-        }
-
-        $secret_key = hash('sha256', config('app.crypt.key'));
-        $secret_iv = substr(hash('sha256', config('app.crypt.iv')), 0, $length);
+        $cryptoService = new CryptoService();
 
         $start = microtime(true);
-        $encrypt = $cryptoService->encrypt($request->get('message'), $secret_key, $secret_iv);
+
+        $encrypt = $cryptoService->encrypt_decrypt(
+            'encrypt',
+            $request->get('message'),
+            $request->get('encrypt_method')
+        );
+
         $time = round(microtime(true) - $start,  20);
 
         $message = new Message();
         $message->type = $request->get('encrypt_method');
         $message->time = $time;
-        $message->key = $secret_key;
-        $message->iv = $secret_iv;
         if (strlen($message->message) < 1000) {
             /**
              * Data for front
@@ -62,13 +57,17 @@ class MessageController extends Controller
         return view('message', ['message' => $message]);
     }
 
-    public function decrypt(int $id): JsonResponse
+    /**
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function decrypt(Request $request): JsonResponse
     {
-        $message = Message::find($id);
-        $cryptoService = new CryptoService($message->type);
+        $message = Message::find($request->get('id'));
+        $cryptoService = new CryptoService();
 
         $start = microtime(true);
-        $decrypted = $cryptoService->decrypt($message->encode, $message->key, $message->iv);
+        $decrypted = $cryptoService->encrypt_decrypt('decrypt', $message->encode, $message->type);
         $time = round(microtime(true) - $start,  20);
 
         return response()->json([
@@ -76,4 +75,5 @@ class MessageController extends Controller
             'time' => $time
         ], 200);
     }
+
 }
