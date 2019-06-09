@@ -41,6 +41,10 @@ class MessageController extends Controller
             $message->path = $path;
             $message->message_type = 'file';
             $message->message = $encodeContent;
+
+            $path = 'encrypt/' . hash('sha256', random_int(0, 100)) . '.txt';
+            Storage::disk('local')->put($path, $encrypt);
+            $message->encrypt_parh = $path;
         } elseif ($request->get('message') !== null) { // Если текс отправлен в поле
             /**
              * Берём время шифрования
@@ -59,6 +63,7 @@ class MessageController extends Controller
                 $message->message = $request->get('message');
                 $message->encode = $encrypt;
                 $message->message_type = 'text';
+                $message->encode = $encrypt;
             } else {
                 $file = $request->get('message');
                 $path = 'encode/' . hash('sha256', random_int(0, 40)) . '.txt';
@@ -77,12 +82,15 @@ class MessageController extends Controller
 
                 $message->path = $path;
                 $message->message_type = 'file';
+
+                $path = 'encrypt/' . hash('sha256', random_int(0, 100)) . '.txt';
+                Storage::disk('local')->put($path, $encrypt);
+                $message->encrypt_parh = $path;
             }
         } else {
             throw new \InvalidArgumentException('Ошибка при отправке данных =(');
         }
 
-        $message->encode = $encrypt;
         $message->type = $request->get('encrypt_method');
         $message->time = $time;
         auth()->user()->messages()->save($message);
@@ -100,8 +108,16 @@ class MessageController extends Controller
     {
         $message = Message::find($request->get('id'));
 
+        if ($message->message_type === 'file') {
+            $message->encode = Storage::get($message->encrypt_parh);
+        }
+
         $start = microtime(true);
-        $decrypted = CryptoService::encrypt_decrypt('decrypt', $message->encode, $message->type);
+        $decrypted = CryptoService::encrypt_decrypt(
+            'decrypt',
+            $message->encode,
+            $message->type
+        );
         $time = round(microtime(true) - $start,  20);
 
         return view('decode', [

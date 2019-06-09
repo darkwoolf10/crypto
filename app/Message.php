@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property bool|string iv
  * @property string message_type
  * @property false|string path
+ * @property string encrypt_parh
  */
 class Message extends Model
 {
