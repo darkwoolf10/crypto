@@ -1,18 +1,23 @@
 <div class="alert alert-primary">
     <input type="hidden" value="{{$message->id}}" class="messageId">
     <p style="word-wrap: break-word;">
-        message: @if($message->message_type == 'file')
-                     Данные находяться в файле
+        message:
+                 @if($message->message_type == 'file')
+                     {{$message->file_text}}
+                 @elseif(strlen($message->message) < 1000)
+                     {{$message->message}}
                  @else
-                    {{$message->message}}
+                     Текст слишком большой
                  @endif
     </p>
     <hr>
     <p style="word-wrap: break-word;">
-        encrypt message: @if(empty($message->encode))
-                             Сообщение слишком большое для вывода.
+        encrypt message: @if(!empty($message->encode))
+                            {{$message->encode}}
+                         @elseif($message->file_encode !== null)
+                             {{$message->file_encode}}
                          @else
-                             {{$message->encode}}
+                            Текс слишком большое для вывода.
                          @endif
     </p>
     <hr>

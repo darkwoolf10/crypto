@@ -23,7 +23,7 @@ class HomeController extends Controller
      */
     public function index()
     {
-        $messages = Message::where('user_id', auth()->user()->id)->orderBy('id', 'desc')->paginate(3);
+        $messages = Message::where('user_id', auth()->user()->id)->orderBy('id', 'desc')->paginate(1);
 
         return view('home', [
             'messages' => $messages,

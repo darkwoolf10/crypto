@@ -45,22 +45,27 @@ class MessageController extends Controller
             $path = 'encrypt/' . hash('sha256', random_int(0, 100)) . '.txt';
             Storage::disk('local')->put($path, $encrypt);
             $message->encrypt_parh = $path;
-        } elseif ($request->get('message') !== null) { // Если текс отправлен в поле
             /**
-             * Берём время шифрования
+             * Если текс отправлен в поле
              */
-            $start = microtime(true);
-
-            $encrypt = CryptoService::encrypt_decrypt(
-                'encrypt',
-                $request->get('message'),
-                $request->get('encrypt_method')
-            );
-
-            $time = round(microtime(true) - $start,  20);
-
+        } elseif ($request->get('message') !== null) {
+            /**
+             * Если текст не большой то записываем в БД иначе в файл
+             */
             if (strlen($request->get('message')) < 1000) {
-                $message->message = $request->get('message');
+                /**
+                 * Берём время шифрования
+                 */
+                $start = microtime(true);
+
+                $encrypt = CryptoService::encrypt_decrypt(
+                    'encrypt',
+                    $request->get('message'),
+                    $request->get('encrypt_method')
+                );
+
+                $time = round(microtime(true) - $start,  20);
+
                 $message->encode = $encrypt;
                 $message->message_type = 'text';
                 $message->encode = $encrypt;
@@ -91,6 +96,7 @@ class MessageController extends Controller
             throw new \InvalidArgumentException('Ошибка при отправке данных =(');
         }
 
+        $message->message = $request->get('message');
         $message->type = $request->get('encrypt_method');
         $message->time = $time;
         auth()->user()->messages()->save($message);
@@ -106,12 +112,21 @@ class MessageController extends Controller
      */
     public function decrypt(Request $request): View
     {
+        /**
+         * Находим запись
+         */
         $message = Message::find($request->get('id'));
 
+        /**
+         * Если это файл скачиваем содержимое
+         */
         if ($message->message_type === 'file') {
             $message->encode = Storage::get($message->encrypt_parh);
         }
 
+        /**
+         * Расшифровуем
+         */
         $start = microtime(true);
         $decrypted = CryptoService::encrypt_decrypt(
             'decrypt',
