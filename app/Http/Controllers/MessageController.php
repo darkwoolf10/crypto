@@ -4,8 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Message;
 use App\Sevices\CryptoService;
-use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
 
 class MessageController extends Controller
@@ -13,67 +14,100 @@ class MessageController extends Controller
     /**
      * @param Request $request
      * @return View
+     * @throws \Exception
      */
-    public function crypt(Request $request): View
+    public function crypt(Request $request): RedirectResponse
     {
-//        $validated = $request->validate([
-//            'message' => 'required',
-//        ]);
-
-        $cryptoService = new CryptoService();
-
-        $start = microtime(true);
-
-        $encrypt = $cryptoService->encrypt_decrypt(
-            'encrypt',
-            $request->get('message'),
-            $request->get('encrypt_method')
-        );
-
-        $time = round(microtime(true) - $start,  20);
-
         $message = new Message();
+
+        /**
+         * Если текст отправлен файлом
+         */
+        if ($request->has('file')) {
+            $file = $request->file('file');
+            $path = $file->store('encode');
+            $encodeContent = Storage::get($path);
+
+            $start = microtime(true);
+
+            $encrypt = CryptoService::encrypt_decrypt(
+                'encrypt',
+                $encodeContent,
+                $request->get('encrypt_method')
+            );
+
+            $time = round(microtime(true) - $start,  20);
+
+            $message->path = $path;
+            $message->message_type = 'file';
+            $message->message = $encodeContent;
+        } elseif ($request->get('message') !== null) { // Если текс отправлен в поле
+            /**
+             * Берём время шифрования
+             */
+            $start = microtime(true);
+
+            $encrypt = CryptoService::encrypt_decrypt(
+                'encrypt',
+                $request->get('message'),
+                $request->get('encrypt_method')
+            );
+
+            $time = round(microtime(true) - $start,  20);
+
+            if (strlen($request->get('message')) < 1000) {
+                $message->message = $request->get('message');
+                $message->encode = $encrypt;
+                $message->message_type = 'text';
+            } else {
+                $file = $request->get('message');
+                $path = 'encode/' . hash('sha256', random_int(0, 40)) . '.txt';
+                Storage::disk('local')->put($path, $file);
+                $encodeContent = Storage::get($path);
+
+                $start = microtime(true);
+
+                $encrypt = CryptoService::encrypt_decrypt(
+                    'encrypt',
+                    $encodeContent,
+                    $request->get('encrypt_method')
+                );
+
+                $time = round(microtime(true) - $start,  20);
+
+                $message->path = $path;
+                $message->message_type = 'file';
+            }
+        } else {
+            throw new \InvalidArgumentException('Ошибка при отправке данных =(');
+        }
+
+        $message->encode = $encrypt;
         $message->type = $request->get('encrypt_method');
         $message->time = $time;
-        if (strlen($message->message) < 1000) {
-            /**
-             * Data for front
-             */
-            $message->message = $request->get('message');
-            $message->encode = $encrypt;
-        }
         auth()->user()->messages()->save($message);
         $message->save();
 
-        if (strlen($message->message) >= 1000) {
-            /**
-             * Data for front
-             */
-            $message->message = $request->get('message');
-            $message->encode = $encrypt;
-        }
 
-
-        return view('message', ['message' => $message]);
+        return redirect()->back();
     }
 
     /**
      * @param Request $request
-     * @return JsonResponse
+     * @return View
      */
-    public function decrypt(Request $request): JsonResponse
+    public function decrypt(Request $request): View
     {
         $message = Message::find($request->get('id'));
-        $cryptoService = new CryptoService();
 
         $start = microtime(true);
-        $decrypted = $cryptoService->encrypt_decrypt('decrypt', $message->encode, $message->type);
+        $decrypted = CryptoService::encrypt_decrypt('decrypt', $message->encode, $message->type);
         $time = round(microtime(true) - $start,  20);
 
-        return response()->json([
+        return view('decode', [
             'decrypted' => $decrypted,
             'time' => $time
-        ], 200);
+        ]);
     }
 
 }

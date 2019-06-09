@@ -11,6 +11,8 @@ use Illuminate\Database\Eloquent\Model;
  * @property mixed type
  * @property string key
  * @property bool|string iv
+ * @property string message_type
+ * @property false|string path
  */
 class Message extends Model
 {

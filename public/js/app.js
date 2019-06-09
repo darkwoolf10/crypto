@@ -49215,29 +49215,42 @@ Vue.component('example-component', __webpack_require__(/*! ./components/ExampleC
  * the page. Then, you may begin adding components to this application
  * or customize the JavaScript scaffolding to fit your unique needs.
  */
+// jQuery("#crypt").click(function (event) {
+//     event.preventDefault();
+//     let message = jQuery('#message').val(),
+//         type = jQuery('input[name=encrypt_method]:checked').val();
+//     let file = $('#file').prop('files')[0];
+//
+//     if (message === '' && $('#file').prop('files').length === 0) {
+//         return false;
+//     }
+//
+//     let data = new FormData();
+//     data.append('file', file);
+//     data.append('message', message);
+//     data.append('type', type);
+//
+//
+//     jQuery.ajax({
+//         method: "POST",
+//         url: "/crypt",
+//         cache: false,
+//         contentType: 'multipart/form-data',
+//         processData: false,
+//         data: {
+//             data: data,
+//             // message: message,
+//             // encrypt_method: type,
+//             // file: $('#file').prop('files')[0]
+//         },
+//         success: function (data) {
+//             $('#message-block').prepend(data);
+//             // document.location.reload(true);
+//         },
+//         dataType: 'html'
+//     });
+// });
 
-jQuery("#crypt").click(function (event) {
-  event.preventDefault();
-  var message = jQuery('#message').val(),
-      type = jQuery('input[name=encrypt_method]:checked').val();
-
-  if (message === '') {
-    return false;
-  }
-
-  jQuery.ajax({
-    method: "POST",
-    url: "/crypt",
-    data: {
-      message: message,
-      encrypt_method: type
-    },
-    success: function success(data) {
-      $('#message-block').prepend(data);
-    },
-    dataType: 'html'
-  });
-});
 jQuery(".decrypt").click(function (event) {
   event.preventDefault();
   var form = $(this).parent().parent();
@@ -49254,7 +49267,8 @@ jQuery(".decrypt").click(function (event) {
       id: messageId
     },
     success: function success(data) {
-      console.log(data);
+      $('#message-block').prepend(data);
+      $('#myModal').modal('show');
     }
   });
 }); // const app = new Vue({

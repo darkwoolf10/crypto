@@ -18,10 +18,10 @@
                         </div>
                     @endif
 
-                    <form action="#" method="POST">
+                    <form action="{{route('crypt')}}" method="POST" enctype="multipart/form-data">
                         @csrf
                         <div class="form-group">
-                            <textarea class="form-control" name="message" id="message" cols="30" rows="5" required></textarea>
+                            <textarea class="form-control" name="message" id="message" cols="30" rows="5"></textarea>
                         </div>
                         <div class="form-group">
                             <label class="radio-inline">
@@ -30,12 +30,32 @@
                             <label class="radio-inline">
                                 <input type="radio" name="encrypt_method" value="AES-256-CBC"> AES-256-CBC
                             </label>
-                            {{--<label class="radio-inline">--}}
-                                {{--<input type="radio" name="encrypt_method" value="md5"> md5--}}
-                            {{--</label>--}}
+                            <label class="radio-inline">
+                                <input type="radio" name="encrypt_method" value="AES-128-CBC"> AES-128-CBC
+                            </label>
                         </div>
+                        <input type="file" class="float-left" name="file" id="file">
                         <button type="submit" class="btn btn-success float-right" id="crypt">Зашифровать</button>
                     </form>
+                </div>
+            </div>
+            <div class="modal" tabindex="-1" role="dialog">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Modal title</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <p>Modal body text goes here.</p>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-primary">Save changes</button>
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        </div>
+                    </div>
                 </div>
             </div>
             <br>

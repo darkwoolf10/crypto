@@ -8,12 +8,13 @@ namespace App\Sevices;
  */
 class CryptoService
 {
-    function encrypt_decrypt(string $action, string $string, string $encrypt_method): string
+    public static function encrypt_decrypt(string $action, string $string, string $encrypt_method): string
     {
         $output = false;
 
         switch ($encrypt_method) {
             case 'BF-OFB': $length = 8; break;
+            case 'AES-128-CBC': $length = 16; break;
             case 'AES-256-CBC': $length = 16; break;
             default: $length = 0;
         }
