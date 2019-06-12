@@ -27,7 +27,12 @@
     <hr>
     <div class="float-left">Created in {{$message->created_at}}</div>
     <div class="float-right">
-        <button class="btn btn-success decrypt">Расшифровать</button>
+        <button type="button" class="btn btn-danger delete-message" data-id="{{ $message->id }}">
+            delete <i class="fas fa-trash-alt"></i>
+        </button>
+        <button class="btn btn-success decrypt">
+            decrypt <i class="fas fa-unlock-alt"></i>
+        </button>
     </div>
     <br>
     <br>

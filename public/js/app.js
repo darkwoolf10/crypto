@@ -49271,6 +49271,22 @@ jQuery(".decrypt").click(function (event) {
       $('#myModal').modal('show');
     }
   });
+});
+jQuery('.delete-message').click(function (event) {
+  event.preventDefault();
+  var message = $(this).parent().parent();
+  var id = this.dataset.id;
+  console.log(id);
+  jQuery.ajax({
+    method: "POST",
+    url: "/message/delete/" + id,
+    data: {
+      message: id
+    },
+    success: function success() {
+      message.remove();
+    }
+  });
 }); // const app = new Vue({
 //     el: '#app',
 // });

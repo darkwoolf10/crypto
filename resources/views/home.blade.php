@@ -35,7 +35,9 @@
                             </label>
                         </div>
                         <input type="file" class="float-left" name="file" id="file">
-                        <button type="submit" class="btn btn-success float-right" id="crypt">Зашифровать</button>
+                        <button type="submit" class="btn btn-success float-right" id="crypt">
+                            encrypt <i class="fas fa-lock"></i>
+                        </button>
                     </form>
                 </div>
             </div>

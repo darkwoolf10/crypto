@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Message;
 use App\Sevices\CryptoService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -13,7 +14,7 @@ class MessageController extends Controller
 {
     /**
      * @param Request $request
-     * @return View
+     * @return RedirectResponse
      * @throws \Exception
      */
     public function crypt(Request $request): RedirectResponse
@@ -139,6 +140,24 @@ class MessageController extends Controller
             'decrypted' => $decrypted,
             'time' => $time
         ]);
+    }
+
+    /**
+     * @param Message $message
+     * @return \Illuminate\Http\JsonResponse
+     * @throws \Exception
+     */
+    public function delete(Message $message): JsonResponse
+    {
+        if (!$message) {
+            throw new \InvalidArgumentException('Message not found!');
+        }
+
+        Storage::delete($message->path);
+        Storage::delete($message->encrypt_parh);
+        $message->delete();
+
+        return response()->json(['message' => 'Сообщение удалено'], 200);
     }
 
 }

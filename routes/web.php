@@ -21,3 +21,5 @@ Route::get('/home', 'HomeController@index')->name('home');
 
 Route::post('/crypt', 'MessageController@crypt')->name('crypt');
 Route::post('/decrypt', 'MessageController@decrypt')->name('decrypt');
+
+Route::post('/message/delete/{message}', 'MessageController@delete')->name('message.delete');

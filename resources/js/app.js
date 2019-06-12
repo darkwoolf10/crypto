@@ -89,6 +89,24 @@ jQuery(".decrypt").click(function (event) {
         }
     });
 });
+
+jQuery('.delete-message').click(function (event) {
+    event.preventDefault();
+    let message = $(this).parent().parent();
+    let id = this.dataset.id;
+    console.log(id);
+
+    jQuery.ajax({
+        method: "POST",
+        url: "/message/delete/" + id,
+        data: {
+            message: id
+        },
+        success: function () {
+            message.remove();
+        }
+    });
+});
 // const app = new Vue({
 //     el: '#app',
 // });
